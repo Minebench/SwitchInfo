@@ -1,0 +1,6 @@
+actionbar:
+  connect: "&2[&f+&2]&r %player%"
+  quit: "&4[&f-&4]&r %player%"
+  switch:
+    join: "&a[&f>&a]&r %player%"
+    leave: "&c[&f<&c]&r %player%"
