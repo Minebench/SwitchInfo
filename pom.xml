@@ -6,13 +6,20 @@
 
     <groupId>de.themoep</groupId>
     <artifactId>SwitchInfo</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <minecraft.plugin.version>${project.version} ${buildDescription}</minecraft.plugin.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.11-SNAPSHOT</version>
+            <version>1.15-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -39,5 +46,42 @@
             <url>http://repo.minebench.de/content/groups/public/</url>
         </repository>
     </repositories>
+
+    <profiles>
+        <profile>
+            <id>static_build_number</id>
+            <activation>
+                <property>
+                    <name>!env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <buildNumber>0</buildNumber>
+                <buildDescription>(compiled at ${maven.build.timestamp})</buildDescription>
+            </properties>
+        </profile>
+        <profile>
+            <id>dynamic_build_number</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <buildNumber>${env.BUILD_NUMBER}</buildNumber>
+                <buildDescription>(build ${env.BUILD_NUMBER})</buildDescription>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <finalName>${project.name}</finalName>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+    </build>
 
 </project>

@@ -4,11 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import de.themoep.serverclusters.bungee.Cluster;
 import de.themoep.serverclusters.bungee.events.ClusterSwitchEvent;
 import de.themoep.serverclusters.bungee.events.NetworkConnectEvent;
-import de.themoep.vnpbungee.VNPBungee;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -16,8 +13,10 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import java.util.concurrent.TimeUnit;
+
 /**
- * ServerClusters
+ * SwitchInfo
  * Copyright (C) 2015 Max Lee (https://github.com/Phoenix616/)
  * <p/>
  * This program is free software: you can redistribute it and/or modify
@@ -96,6 +95,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority=EventPriority.HIGHEST)
     public void onPlayerQuit(ClusterSwitchEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         BaseComponent[] leaveMessage = TextComponent.fromLegacyText(
                 plugin.getLang().getTranslation(
                         "actionbar.switch.leave",
@@ -115,20 +117,22 @@ public class PlayerListener implements Listener {
                 )
         );
 
-        for(ProxiedPlayer player : plugin.getProxy().getPlayers()) {
-            if(player.equals(event.getPlayer()) || !player.hasPermission("switchinfo.alert.switch"))
-                continue;
-            boolean onFrom = event.getFrom().getPlayerlist().contains(player);
-            boolean onTo = event.getTo().getPlayerlist().contains(player);
-            if(!onFrom && !onTo)
-                continue;
-            if(event.getPlayer().hasPermission("vanish.see") && !player.hasPermission("vanish.see"))
-                continue;
+        plugin.getProxy().getScheduler().schedule(plugin, () -> {
+            for(ProxiedPlayer player : plugin.getProxy().getPlayers()) {
+                if(player.equals(event.getPlayer()) || !player.hasPermission("switchinfo.alert.switch"))
+                    continue;
+                boolean onFrom = event.getFrom().getPlayerlist().contains(player);
+                boolean onTo = event.getTo().getPlayerlist().contains(player);
+                if(!onFrom && !onTo)
+                    continue;
+                if(event.getPlayer().hasPermission("vanish.see") && !player.hasPermission("vanish.see"))
+                    continue;
 
-            if(onFrom)
-                player.sendMessage(ChatMessageType.ACTION_BAR, leaveMessage);
-            else if(onTo)
-                player.sendMessage(ChatMessageType.ACTION_BAR, joinMessage);
-        }
+                if(onFrom)
+                    player.sendMessage(ChatMessageType.ACTION_BAR, leaveMessage);
+                else if(onTo)
+                    player.sendMessage(ChatMessageType.ACTION_BAR, joinMessage);
+            }
+        }, 2, TimeUnit.SECONDS);
     }
 }

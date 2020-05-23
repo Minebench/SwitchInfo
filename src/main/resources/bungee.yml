@@ -1,5 +1,5 @@
 name: SwitchInfo
 main: de.themoep.switchinfo.SwitchInfo
-version: 1.0-SAPSHOT
+version: '${minecraft.plugin.version}'
 author: Phoenix616
 depends: [ServerClusters]
