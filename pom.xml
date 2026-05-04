@@ -19,7 +19,7 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.15-SNAPSHOT</version>
+            <version>1.21-R0.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -43,7 +43,7 @@
         </repository>
         <repository>
             <id>minebench-repo</id>
-            <url>http://repo.minebench.de/content/groups/public/</url>
+            <url>https://repo.minebench.de/content/groups/public/</url>
         </repository>
     </repositories>
 
